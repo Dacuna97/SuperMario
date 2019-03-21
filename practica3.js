@@ -45,7 +45,7 @@ var game = function () {
         });
 
         //***************************************
-         Q.compileSheets("goomba.png", "goomba.json");
+        Q.compileSheets("goomba.png", "goomba.json");
 
         Q.Sprite.extend("Goomba", {
 
@@ -53,20 +53,32 @@ var game = function () {
 
                 this._super(p, {
                     sheet: "goomba", // Setting a sprite sheet sets sprite width and height
-                    x: 180, // You can also set additional properties that can
-                    y: 380, // be overridden on object creation
-                    vx:10
-                
+                    x: 270, // You can also set additional properties that can
+                    y: 528, // be overridden on object creation
+                    vx: 40
+
                 });
                 this.add('2d,aiBounce');
+                this.on("bump.left,bump.right,bump.bottom", function (collision) {
+                    if (collision.obj.isA("Player")) {
+                        Q.stageScene("endGame", 1, {
+                            label: "You Died"
+                        });
+                        collision.obj.destroy();
+                    }
+                });
+                // If the enemy gets hit on the top, destroy it
+                // and give the user a "hop"
+                this.on("bump.top", function (collision) {
+                    if (collision.obj.isA("Player")) {
+                        this.destroy();
+                        collision.obj.p.vy = -300;
+                    }
+                });
+                
             },
-            step: function (dt) {
-                if (this.p.x < 300)
-                    this.p.vx = -10;
-                if (this.p.x > 400)
-                    this.p.vx = 10;
-                this.p.x += dt * this.p.vx;
 
+            step: function (dt) {
             }
         });
         //***************************************
@@ -77,7 +89,7 @@ var game = function () {
             // Create the player and add them to the stage
             var player = stage.insert(new Q.Player());
             stage.add("viewport").follow(player);
-            var goomba = stage.insert(new Q.Goomba());
+            stage.insert(new Q.Goomba());
         });
 
         Q.loadTMX("level.tmx", function () {
