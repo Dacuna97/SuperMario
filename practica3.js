@@ -14,10 +14,6 @@ var game = function () {
         .controls().touch();
 
 
-    // ## Asset Loading and Game Launch
-    // Q.load can be called at any time to load additional assets
-    // assets that are already loaded will be skipped
-    // The callback will be triggered when everything is loaded
     Q.load("mario_small.png, mario_small.json, tiles.png", function () {
         // Sprites sheets can be created manually
         Q.sheet("tiles", "tiles.png", {
