@@ -21,7 +21,7 @@ var game = function () {
             tileh: 32
         });
         // Or from a .json asset that defines sprite locations
-        Q.compileSheets("mario_small.png", "mario_small.json","goomba.png","goomba.json");
+        Q.compileSheets("mario_small.png", "mario_small.json");
 
         Q.Sprite.extend("Player", {
 
@@ -45,7 +45,7 @@ var game = function () {
         });
 
         //***************************************
-       //  Q.compileSheets("goomba.png", "goomba.json");
+         Q.compileSheets("goomba.png", "goomba.json");
 
         Q.Sprite.extend("Goomba", {
 
