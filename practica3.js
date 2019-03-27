@@ -14,7 +14,7 @@ var game = function () {
         .controls().touch();
 
 
-    Q.load("mario_small.png, mario_small.json,goomba.png, goomba.json, tiles.png", function () {
+    Q.load("mario_small.png, mario_small.json,goomba.png, goomba.json, tiles.png,bloopa.json, bloopa.png" , function () {
         // Sprites sheets can be created manually
         Q.sheet("tiles", "tiles.png", {
             tilew: 32,
@@ -82,6 +82,52 @@ var game = function () {
             }
         });
         //***************************************
+        Q.compileSheets("bloopa.png", "bloopa.json");
+
+        Q.Sprite.extend("Bloopa", {
+
+            init: function (p) {
+
+                this._super(p, {
+                    sheet: "bloopa", // Setting a sprite sheet sets sprite width and height
+                    x: 180, // You can also set additional properties that can
+                    y: 425, // be overridden on object creation
+                    vy: -10,
+                    move:''
+                });
+                this.add('2d,aiBounce');
+                this.on("bump.left,bump.right,bump.bottom", function (collision) {
+                    if (collision.obj.isA("Player")) {
+                        Q.stageScene("endGame", 1, {
+                            label: "You Died"
+                        });
+                        collision.obj.destroy();
+                    }
+                });
+                // If the enemy gets hit on the top, destroy it
+                // and give the user a "hop"
+                this.on("bump.top", function (collision) {
+                    if (collision.obj.isA("Player")) {
+                        this.destroy();
+                        collision.obj.p.vy = -300;
+                    }
+                });
+                
+            },
+
+            step: function (dt) {
+                if(this.p.y>=528 && this.p.move!='up')
+                    this.p.move='up';
+                if(this.p.move=='up' && this.p.y<=330)
+                    this.p.move='';
+                if (this.p.move=='up')
+                    this.p.vy=-100;
+                    this.p.y+=this.p.vy*dt;
+                
+            }
+        });
+
+        //************************************** */
 
 
         Q.scene("level1", function (stage) {
@@ -90,6 +136,7 @@ var game = function () {
             var player = stage.insert(new Q.Player());
             stage.add("viewport").follow(player);
             stage.insert(new Q.Goomba());
+            stage.insert(new Q.Bloopa());
         });
 
         Q.loadTMX("level.tmx", function () {
