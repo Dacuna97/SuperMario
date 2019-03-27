@@ -90,6 +90,9 @@ var game = function () {
                         if (this.p.y > 580) {
                             this.play("die");
                             this.del("2d");
+                            Q.stageScene("endGame", 1, {
+                                label: "You Died"
+                            });
                         }
                     } else if (this.p.vx > 0 && this.p.vy == 0) {
                         this.play("run_right");
@@ -124,6 +127,7 @@ var game = function () {
                         collision.obj.play("die");
                         collision.obj.p.dead = true;
                         collision.obj.p.vy = -500;
+                        collision.obj.del("platformerControls");
                         Q.stageScene("endGame", 1, {
                             label: "You Died"
                         });
@@ -134,7 +138,7 @@ var game = function () {
                 // If the enemy gets hit on the top, destroy it
                 // and give the user a "hop"
                 this.on("bump.top", function (collision) {
-                    if (collision.obj.isA("Player")) {
+                    if (collision.obj.isA("Player")&& !collision.obj.p.dead) {
                         this.destroy();
                         collision.obj.p.vy = -300;
                     }
@@ -160,17 +164,20 @@ var game = function () {
                 });
                 this.add('2d,aiBounce');
                 this.on("bump.left,bump.right,bump.bottom", function (collision) {
-                    if (collision.obj.isA("Player")) {
+                    if (collision.obj.isA("Player")&& !collision.obj.p.dead) {
+                        collision.obj.play("die");
+                        collision.obj.p.dead = true;
+                        collision.obj.p.vy = -500;
+                        collision.obj.del("platformerControls");
                         Q.stageScene("endGame", 1, {
                             label: "You Died"
                         });
-                        collision.obj.destroy();
                     }
                 });
                 // If the enemy gets hit on the top, destroy it
                 // and give the user a "hop"
                 this.on("bump.top", function (collision) {
-                    if (collision.obj.isA("Player")) {
+                    if (collision.obj.isA("Player")&& !collision.obj.p.dead) {
                         this.destroy();
                         collision.obj.p.vy = -300;
                     }
@@ -191,7 +198,14 @@ var game = function () {
         });
 
         //************************************** */
-
+        Q.scene("endGame",function(stage) {
+            var label = stage.insert(new Q.UI.Text({
+            x: Q.width/2,
+            y: Q.height/2,
+            label: stage.options.label
+            }));
+            });
+            
 
         Q.scene("level1", function (stage) {
             Q.stageTMX("level.tmx", stage);
