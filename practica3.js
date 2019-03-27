@@ -122,8 +122,8 @@ var game = function () {
                 });
                 this.add('2d,aiBounce');
                 this.on("bump.left,bump.right,bump.bottom", function (collision) {
-                    
-                    if (collision.obj.isA("Player") && !collision.obj.p.dead ) {
+
+                    if (collision.obj.isA("Player") && !collision.obj.p.dead) {
                         collision.obj.play("die");
                         collision.obj.p.dead = true;
                         collision.obj.p.vy = -500;
@@ -131,14 +131,14 @@ var game = function () {
                         Q.stageScene("endGame", 1, {
                             label: "You Died"
                         });
-                        
+
                         //collision.obj.destroy();
                     }
                 });
                 // If the enemy gets hit on the top, destroy it
                 // and give the user a "hop"
                 this.on("bump.top", function (collision) {
-                    if (collision.obj.isA("Player")&& !collision.obj.p.dead) {
+                    if (collision.obj.isA("Player") && !collision.obj.p.dead) {
                         this.destroy();
                         collision.obj.p.vy = -300;
                     }
@@ -164,7 +164,7 @@ var game = function () {
                 });
                 this.add('2d,aiBounce');
                 this.on("bump.left,bump.right,bump.bottom", function (collision) {
-                    if (collision.obj.isA("Player")&& !collision.obj.p.dead) {
+                    if (collision.obj.isA("Player") && !collision.obj.p.dead) {
                         collision.obj.play("die");
                         collision.obj.p.dead = true;
                         collision.obj.p.vy = -500;
@@ -177,7 +177,7 @@ var game = function () {
                 // If the enemy gets hit on the top, destroy it
                 // and give the user a "hop"
                 this.on("bump.top", function (collision) {
-                    if (collision.obj.isA("Player")&& !collision.obj.p.dead) {
+                    if (collision.obj.isA("Player") && !collision.obj.p.dead) {
                         this.destroy();
                         collision.obj.p.vy = -300;
                     }
@@ -198,14 +198,14 @@ var game = function () {
         });
 
         //************************************** */
-        Q.scene("endGame",function(stage) {
+        Q.scene("endGame", function (stage) {
             var label = stage.insert(new Q.UI.Text({
-            x: Q.width/2,
-            y: Q.height/2,
-            label: stage.options.label
+                x: Q.width / 2,
+                y: Q.height / 2,
+                label: stage.options.label
             }));
-            });
-            
+        });
+
 
         Q.scene("level1", function (stage) {
             Q.stageTMX("level.tmx", stage);
