@@ -9,14 +9,14 @@ var game = function () {
         // Maximize this game to whatever the size of the browser is
         .setup({
             scaleToFit: true,
-            width: 1000,
-            height: 600
+            width: 1200,
+            height: 800
         })
         // And turn on default input controls and touch input (for UI)
         .controls().touch();
 
 
-    Q.load("mario_small.png, mario_small.json,goomba.png, goomba.json, tiles.png,bloopa.json, bloopa.png", function () {
+    Q.load("mario_small.png, mario_small.json,goomba.png, goomba.json, tiles.png, bloopa.json, bloopa.png, princess.png, mainTitle.png", function () {
         // Sprites sheets can be created manually
         Q.sheet("tiles", "tiles.png", {
             tilew: 32,
@@ -90,7 +90,6 @@ var game = function () {
                         if (this.p.y > 580) {
                             this.play("die");
                             this.p.dead = true;
-                            this.del("platformerControls");
                             Q.stageScene("endGame", 1, {
                                 label: "You Died"
                             });
@@ -102,9 +101,7 @@ var game = function () {
                     } else {
                         this.play("stand_" + this.p.direction);
                     }
-                }
-                else {
-                    this.p.vy = 0;
+                } else {
                     this.p.vx = 0;
                 }
 
@@ -191,7 +188,7 @@ var game = function () {
             },
 
             step: function (dt) {
-                if (this.p.y >= 528 && this.p.move != 'up')
+                if (this.p.y >= 518 && this.p.move != 'up')
                     this.p.move = 'up';
                 if (this.p.move == 'up' && this.p.y <= 330)
                     this.p.move = '';
@@ -201,7 +198,25 @@ var game = function () {
 
             }
         });
-
+        Q.compileSheets("princess.png");
+        Q.Sprite.extend("Princess", {
+            init: function (p) {
+                this._super(p, {
+                    asset: "princess.png",
+                    x: 2017,
+                    y: 460
+                });
+                this.add('2d');
+                this.on("bump.left,bump.right,bump.bottom,bump.top", function (collision) {
+                    if (collision.obj.isA("Player") && !collision.obj.p.dead) {
+                        Q.stageScene("winGame", 1, {
+                            label: "You just got friendzoned <3"
+                        });
+                    }
+                });
+            },
+            step: function (dt) {}
+        });
         //************************************** */
         Q.scene("endGame", function (stage) {
             var container = stage.insert(new Q.UI.Container({
@@ -231,7 +246,58 @@ var game = function () {
             container.fit(20);
         });
 
+        Q.scene("winGame", function (stage) {
+            var container = stage.insert(new Q.UI.Container({
+                x: Q.width / 2,
+                y: Q.height / 2,
+                fill: "rgba(0,0,0,0.5)"
+            }));
 
+            var button = container.insert(new Q.UI.Button({
+                x: 0,
+                y: 0,
+                fill: "#CCCCCC",
+                label: "Play Again"
+            }));
+
+            var label = container.insert(new Q.UI.Text({
+                x: 10,
+                y: -10 - button.p.h,
+                label: stage.options.label
+            }));
+
+            button.on("click", function () {
+                Q.clearStages();
+                Q.stageScene('level1');
+            });
+
+            container.fit(20);
+        });
+        Q.compileSheets("mainTitle.png");
+
+        Q.scene("mainTitle", function (stage) {
+            var container = stage.insert(new Q.UI.Container({
+                x: Q.width / 2,
+                y: Q.height / 2,
+                w: Q.width,
+                h: Q.height,
+                fill: "rgba(0,0,0,0.5)"
+            }));
+
+            var button = container.insert(new Q.UI.Button({
+                asset: 'mainTitle.png',
+                x: 0,
+                y: 0,
+                fill: "#CCCCCC",
+            }));
+
+            button.on("click", function () {
+                Q.clearStages();
+                Q.stageScene('level1');
+            });
+        
+            container.fit(20);
+        });
         Q.scene("level1", function (stage) {
             Q.stageTMX("level.tmx", stage);
             // Create the player and add them to the stage
@@ -242,10 +308,11 @@ var game = function () {
             });
             stage.insert(new Q.Goomba());
             stage.insert(new Q.Bloopa());
+            stage.insert(new Q.Princess());
         });
 
         Q.loadTMX("level.tmx", function () {
-            Q.stageScene("level1");
+            Q.stageScene("mainTitle");
         });
 
     });
