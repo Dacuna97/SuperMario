@@ -8,9 +8,9 @@ var game = function () {
         .include("Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX")
         // Maximize this game to whatever the size of the browser is
         .setup({
-            maximize: true,
-            width: 800,
-            height: 700
+            scaleToFit: true,
+            width: 1000,
+            height: 600
         })
         // And turn on default input controls and touch input (for UI)
         .controls().touch();
