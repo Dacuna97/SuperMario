@@ -73,10 +73,19 @@ var game = function () {
                     sheet: "marioR", // Setting a sprite sheet sets sprite width and height
                     x: 50, // You can also set additional properties that can
                     y: 380, // be overridden on object creation
-                    dead: false
+                    dead: false,
+                    coins:0
                 });
 
                 this.add('2d, platformerControls, animation');
+                this.on("bump.left,bump.right", function (collision) {
+                if(collision.tile==41||collision.tile==34||collision.tile==27){
+                    this.coins++;
+                   // collision.tile.destroy();
+                    console.log(collision);
+                }
+                    
+                });
 
             },
             step: function (dt) {
