@@ -74,17 +74,16 @@ var game = function () {
                     x: 50, // You can also set additional properties that can
                     y: 380, // be overridden on object creation
                     dead: false,
-                    coins:0
+                    coins: 0
                 });
 
                 this.add('2d, platformerControls, animation');
                 this.on("bump.left,bump.right", function (collision) {
-                if(collision.tile==41||collision.tile==34||collision.tile==27){
-                    this.coins++;
-                   // collision.tile.destroy();
-                    console.log(collision);
-                }
-                    
+                    if (collision.tile == 41 || collision.tile == 34 || collision.tile == 27) {
+                        this.coins++;
+                        console.log(collision);
+                    }
+
                 });
 
             },
@@ -304,7 +303,7 @@ var game = function () {
                 Q.clearStages();
                 Q.stageScene('level1');
             });
-        
+
             container.fit(20);
         });
         Q.scene("level1", function (stage) {
