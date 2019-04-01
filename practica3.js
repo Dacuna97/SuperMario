@@ -14,9 +14,10 @@ var game = function () {
         })
         // And turn on default input controls and touch input (for UI)
         .controls().touch();
+   
 
 
-    Q.load("mario_small.png, mario_small.json,goomba.png, goomba.json, tiles.png, bloopa.json, bloopa.png, princess.png, mainTitle.png", function () {
+    Q.load("mario_small.png, mario_small.json,goomba.png, goomba.json, tiles.png, bloopa.json, bloopa.png, princess.png, mainTitle.png, coin.png, coin.json", function () {
         // Sprites sheets can be created manually
         Q.sheet("tiles", "tiles.png", {
             tilew: 32,
@@ -81,9 +82,9 @@ var game = function () {
                 this.on("bump.left,bump.right", function (collision) {
                     if (collision.tile == 41 || collision.tile == 34 || collision.tile == 27) {
                         this.coins++;
-                        console.log(collision);
+                        console.log(collision.obj);
+                        collision.obj.destroy();
                     }
-
                 });
 
             },
@@ -225,6 +226,26 @@ var game = function () {
             },
             step: function (dt) {}
         });
+        Q.compileSheets("coin.png", "coin.json");
+        Q.Sprite.extend("Coin", {
+            init: function (p) {
+                this._super(p, {
+                    sheet: "coin",
+                    x: 100,
+                    y: 450,
+                    gravity: 0,
+                    frame: 0
+                });
+                this.add('2d');
+                this.on("bump.left,bump.right,bump.bottom,bump.top", function (collision) {
+                    if (collision.obj.isA("Player") && !collision.obj.p.dead) {
+                        Q.state.inc("score", 1);
+                        this.destroy();
+
+                    }
+                });
+            }
+        })
         //************************************** */
         Q.scene("endGame", function (stage) {
             var container = stage.insert(new Q.UI.Container({
@@ -317,9 +338,27 @@ var game = function () {
             stage.insert(new Q.Goomba());
             stage.insert(new Q.Bloopa());
             stage.insert(new Q.Princess());
+            stage.insert(new Q.Coin());
+            stage.insert(new Q.Score());
+           
         });
-
+        Q.UI.Text.extend("Score", {
+            init: function (p) {
+                this._super({
+                    label: "score: 0",
+                    x: 0,
+                    y: 0
+                });
+                Q.state.on("change.score", this, "score");
+            },
+            score: function (score) {
+                this.p.label = "score: " + score;
+            }
+        });
         Q.loadTMX("level.tmx", function () {
+            Q.state.reset({
+                score: 0
+            });
             Q.stageScene("mainTitle");
         });
 
