@@ -231,8 +231,8 @@ var game = function () {
             init: function (p) {
                 this._super(p, {
                     sheet: "coin",
-                    x: 100,
-                    y: 450,
+                    x: p.x,
+                    y: p.y,
                     gravity: 0,
                     frame: 0
                 });
