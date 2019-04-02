@@ -14,7 +14,7 @@ var game = function () {
         })
         // And turn on default input controls and touch input (for UI)
         .controls().touch();
-   
+
 
 
     Q.load("mario_small.png, mario_small.json,goomba.png, goomba.json, tiles.png, bloopa.json, bloopa.png, princess.png, mainTitle.png, coin.png, coin.json", function () {
@@ -233,15 +233,16 @@ var game = function () {
                     sheet: "coin",
                     x: p.x,
                     y: p.y,
+                    sensor: true,
                     gravity: 0,
                     frame: 0
                 });
-                this.add('2d');
+                this.add('2d, animation, tween');
                 this.on("bump.left,bump.right,bump.bottom,bump.top", function (collision) {
                     if (collision.obj.isA("Player") && !collision.obj.p.dead) {
                         Q.state.inc("score", 1);
-                        this.destroy();
-
+                        this.animate({ x: this.p.x, y: this.p.y - 100 },
+                            0.5, Q.Easing.Quadratic.Linear, {callback: ()=>{this.destroy() }});
                     }
                 });
             }
@@ -338,9 +339,33 @@ var game = function () {
             stage.insert(new Q.Goomba());
             stage.insert(new Q.Bloopa());
             stage.insert(new Q.Princess());
-            stage.insert(new Q.Coin());
+            stage.insert(new Q.Coin({
+                x: 270,
+                y: 450
+            }));
+            stage.insert(new Q.Coin({
+                x: 300,
+                y: 450
+            }));
+            stage.insert(new Q.Coin({
+                x: 330,
+                y: 450
+            }));
+
+            stage.insert(new Q.Coin({
+                x: 470,
+                y: 450
+            }));
+            stage.insert(new Q.Coin({
+                x: 500,
+                y: 450
+            }));
+            stage.insert(new Q.Coin({
+                x: 530,
+                y: 450
+            }));
             stage.insert(new Q.Score());
-           
+
         });
         Q.UI.Text.extend("Score", {
             init: function (p) {
