@@ -79,13 +79,13 @@ var game = function () {
                 });
 
                 this.add('2d, platformerControls, animation');
-                this.on("bump.left,bump.right", function (collision) {
-                    if (collision.tile == 41 || collision.tile == 34 || collision.tile == 27) {
+                /*this.on("bump.left,bump.right", function (collision) {
+                    /*if (collision.tile == 41 || collision.tile == 34 || collision.tile == 27) {
                         this.coins++;
                         console.log(collision.obj);
                         collision.obj.destroy();
                     }
-                });
+                });*/
 
             },
             step: function (dt) {
@@ -133,7 +133,7 @@ var game = function () {
                 });
                 this.add('2d,aiBounce');
                 this.on("bump.left,bump.right,bump.bottom", function (collision) {
-
+                    
                     if (collision.obj.isA("Player") && !collision.obj.p.dead) {
                         collision.obj.play("die");
                         collision.obj.p.dead = true;
@@ -240,9 +240,9 @@ var game = function () {
                 this.add('2d, animation, tween');
                 this.on("bump.left,bump.right,bump.bottom,bump.top", function (collision) {
                     if (collision.obj.isA("Player") && !collision.obj.p.dead) {
-                        Q.state.inc("score", 1);
                         this.animate({ x: this.p.x, y: this.p.y - 100 },
-                            0.5, Q.Easing.Quadratic.Linear, {callback: ()=>{this.destroy() }});
+                            1, Q.Easing.Quadratic.Linear, {callback: ()=>{this.destroy(); }});
+                        Q.state.inc("score", 1)
                     }
                 });
             }
