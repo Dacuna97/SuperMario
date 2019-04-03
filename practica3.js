@@ -207,7 +207,7 @@ var game = function () {
         Q.Sprite.extend("Coin", {
             init: function (p) {
                 this._super(p, {
-                    sheet: p.sprite,
+                    sheet: "coin" ,
                     x: p.x,
                     y: p.y,
                     sensor: true,
@@ -258,7 +258,9 @@ var game = function () {
 
             button.on("click", function () {
                 Q.clearStages();
+                Q.stageScene('hud', 1);
                 Q.stageScene('level1');
+                Q.state.p.score=0;
             });
 
             container.fit(20);
@@ -286,7 +288,10 @@ var game = function () {
 
             button.on("click", function () {
                 Q.clearStages();
+                Q.stageScene('hud', 1);
                 Q.stageScene('level1');
+                Q.state.p.score=0;
+                
             });
 
             container.fit(20);

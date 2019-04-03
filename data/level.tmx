@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="60" height="18" tilewidth="34" tileheight="34" infinite="0" nextlayerid="6" nextobjectid="5">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="60" height="18" tilewidth="34" tileheight="34" infinite="0" nextlayerid="6" nextobjectid="8">
  <tileset firstgid="1" name="tiles" tilewidth="34" tileheight="34" tilecount="49" columns="7">
   <image source="../images/tiles.png" width="256" height="256"/>
  </tileset>
- <tileset firstgid="50" source="coin.json"/>
  <imagelayer id="1" name="background">
   <image source="../images/bg.png" width="800" height="600"/>
  </imagelayer>
@@ -1094,14 +1093,6 @@
    <tile gid="15"/>
   </data>
  </layer>
- <objectgroup id="5" name="Coins" offsetx="124" offsety="0">
-  <object id="3" gid="50" x="-3" y="513" width="34" height="34">
-   <properties>
-    <property name="Class" value="Coin"/>
-    <property name="sprite" value="coin"/>
-   </properties>
-  </object>
- </objectgroup>
  <layer id="3" name="Background" width="60" height="18">
   <data>
    <tile/>
