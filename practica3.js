@@ -116,23 +116,10 @@ var game = function () {
 
             }
         });
+        Q.component("enemy", {
+            added: function () {
 
-        //***************************************
-        Q.compileSheets("goomba.png", "goomba.json");
-
-        Q.Sprite.extend("Goomba", {
-
-            init: function (p) {
-
-                this._super(p, {
-                    sheet: "goomba", // Setting a sprite sheet sets sprite width and height
-                    x: 270, // You can also set additional properties that can
-                    y: 528, // be overridden on object creation
-                    vx: 40
-
-                });
-                this.add('2d,aiBounce');
-                this.on("bump.left,bump.right,bump.bottom", function (collision) {
+                this.entity.on("bump.left,bump.right,bump.bottom", function (collision) {
 
                     if (collision.obj.isA("Player") && !collision.obj.p.dead) {
                         collision.obj.play("die");
@@ -148,24 +135,36 @@ var game = function () {
                 });
                 // If the enemy gets hit on the top, destroy it
                 // and give the user a "hop"
-                this.on("bump.top", function (collision) {
+                this.entity.on("bump.top", function (collision) {
                     if (collision.obj.isA("Player") && !collision.obj.p.dead) {
                         this.destroy();
                         collision.obj.p.vy = -300;
                     }
                 });
+            }
+        });
+        //***************************************
+        Q.compileSheets("goomba.png", "goomba.json");
 
+        Q.Sprite.extend("Goomba", {
+
+            init: function (p) {
+
+                this._super(p, {
+                    sheet: "goomba", // Setting a sprite sheet sets sprite width and height
+                    x: 270, // You can also set additional properties that can
+                    y: 528, // be overridden on object creation
+                    vx: 40
+                });
+                this.add('2d,aiBounce,enemy');
             },
-
             step: function (dt) {}
         });
         //***************************************
         Q.compileSheets("bloopa.png", "bloopa.json");
 
         Q.Sprite.extend("Bloopa", {
-
             init: function (p) {
-
                 this._super(p, {
                     sheet: "bloopa", // Setting a sprite sheet sets sprite width and height
                     x: 180, // You can also set additional properties that can
@@ -173,29 +172,8 @@ var game = function () {
                     vy: -10,
                     move: ''
                 });
-                this.add('2d,aiBounce');
-                this.on("bump.left,bump.right,bump.bottom", function (collision) {
-                    if (collision.obj.isA("Player") && !collision.obj.p.dead) {
-                        collision.obj.play("die");
-                        collision.obj.p.dead = true;
-                        collision.obj.p.vy = -500;
-                        collision.obj.del("platformerControls");
-                        Q.stageScene("endGame", 1, {
-                            label: "You Died"
-                        });
-                    }
-                });
-                // If the enemy gets hit on the top, destroy it
-                // and give the user a "hop"
-                this.on("bump.top", function (collision) {
-                    if (collision.obj.isA("Player") && !collision.obj.p.dead) {
-                        this.destroy();
-                        collision.obj.p.vy = -300;
-                    }
-                });
-
+                this.add('2d,aiBounce,enemy');
             },
-
             step: function (dt) {
                 if (this.p.y >= 518 && this.p.move != 'up')
                     this.p.move = 'up';
@@ -204,7 +182,6 @@ var game = function () {
                 if (this.p.move == 'up')
                     this.p.vy = -100;
                 this.p.y += this.p.vy * dt;
-
             }
         });
         Q.compileSheets("princess.png");
