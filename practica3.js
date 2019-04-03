@@ -79,13 +79,13 @@ var game = function () {
                 });
 
                 this.add('2d, platformerControls, animation');
-                this.on("bump.left,bump.right", function (collision) {
+                /*this.on("bump.left,bump.right", function (collision) {
                     if (collision.tile == 41 || collision.tile == 34 || collision.tile == 27) {
                         this.coins++;
                         console.log(collision.obj);
                         collision.obj.destroy();
                     }
-                });
+                });*/
 
             },
             step: function (dt) {
@@ -207,7 +207,7 @@ var game = function () {
         Q.Sprite.extend("Coin", {
             init: function (p) {
                 this._super(p, {
-                    sheet: "coin",
+                    sheet: p.sprite,
                     x: p.x,
                     y: p.y,
                     sensor: true,
@@ -311,19 +311,39 @@ var game = function () {
 
             button.on("click", function () {
                 Q.clearStages();
+                Q.stageScene('hud', 1);
                 Q.stageScene('level1');
+                
             });
 
             container.fit(20);
         });
+        Q.scene("hud", function(stage){
+            Q.UI.Text.extend("Score", {
+                init: function (p) {
+                    this._super({
+                        label: "score: 0",
+                        x: 50,
+                        y: 0
+                    });
+                    Q.state.on("change.score", this, "score");
+                },
+                score: function (score) {
+                    this.p.label = "score: " + score;
+                },
+            });
+            stage.insert(new Q.Score());
+        })
         Q.scene("level1", function (stage) {
             Q.stageTMX("level.tmx", stage);
             // Create the player and add them to the stage
+           
             var player = stage.insert(new Q.Player());
             stage.add("viewport").follow(player, {
                 x: true,
                 y: false
             });
+            
             stage.insert(new Q.Goomba());
             stage.insert(new Q.Bloopa());
             stage.insert(new Q.Princess());
@@ -352,22 +372,10 @@ var game = function () {
                 x: 530,
                 y: 450
             }));
-            stage.insert(new Q.Score());
+           
 
         });
-        Q.UI.Text.extend("Score", {
-            init: function (p) {
-                this._super({
-                    label: "score: 0",
-                    x: 0,
-                    y: 0
-                });
-                Q.state.on("change.score", this, "score");
-            },
-            score: function (score) {
-                this.p.label = "score: " + score;
-            }
-        });
+       
         Q.loadTMX("level.tmx", function () {
             Q.state.reset({
                 score: 0
