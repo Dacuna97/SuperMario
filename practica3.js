@@ -191,11 +191,13 @@ var game = function () {
                 this._super(p, {
                     asset: "princess.png",
                     x: 2017,
-                    y: 460
+                    y: 460,
+                    win: false
                 });
                 this.add('2d');
                 this.on("bump.left,bump.right,bump.bottom,bump.top", function (collision) {
-                    if (collision.obj.isA("Player") && !collision.obj.p.dead) {
+                    if (collision.obj.isA("Player") && !collision.obj.p.dead && !this.p.win) {
+                        this.p.win = true;
                         Q.stageScene("winGame", 1, {
                             label: "You just got friendzoned <3"
                         });
