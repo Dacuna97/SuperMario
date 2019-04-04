@@ -1,14 +1,2 @@
-{ "columns":3,
- "image":"..\/images\/coin.png",
- "imageheight":34,
- "imagewidth":102,
- "margin":0,
- "name":"coin",
- "spacing":0,
- "tilecount":3,
- "tiledversion":"1.2.3",
- "tileheight":34,
- "tilewidth":34,
- "type":"tileset",
- "version":1.2
+{"coin":{"sx":0,"sy":0,"tileW":34,"tileH":34,"frames":3}
 }

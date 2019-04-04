@@ -1,11 +1,12 @@
 "use strict"
-
 var game = function () {
     // Set up an instance of the Quintus engine and include
     // the Sprites, Scenes, Input and 2D module. The 2D module
     // includes the `TileLayer` class as well as the `2d` componet.
-    var Q = window.Q = Quintus()
-        .include("Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX")
+    var Q = Quintus({
+            audioSupported: ['mp3', 'ogg']
+        })
+        .include("Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX,Audio")
         // Maximize this game to whatever the size of the browser is
         .setup({
             scaleToFit: true,
@@ -13,11 +14,11 @@ var game = function () {
             height: 800
         })
         // And turn on default input controls and touch input (for UI)
-        .controls().touch();
+        .controls().touch().enableSound();
 
 
 
-    Q.load("mario_small.png, mario_small.json,goomba.png, goomba.json, tiles.png, bloopa.json, bloopa.png, princess.png, mainTitle.png, coin.png, coin.json", function () {
+    Q.load("mario_small.png, mario_small.json, goomba.png, goomba.json, tiles.png, bloopa.json, bloopa.png, princess.png, mainTitle.png, coin.png, coin.json, music_main.mp3, music_main.ogg,coin.mp3, coin.ogg,music_die.mp3, music_die.ogg, music_level_complete.mp3, music_level_complete.ogg", function () {
         // Sprites sheets can be created manually
         Q.sheet("tiles", "tiles.png", {
             tilew: 32,
@@ -207,7 +208,7 @@ var game = function () {
         Q.Sprite.extend("Coin", {
             init: function (p) {
                 this._super(p, {
-                    sheet: "coin" ,
+                    sheet: "coin",
                     x: p.x,
                     y: p.y,
                     sensor: true,
@@ -220,6 +221,7 @@ var game = function () {
                     if (collision.obj.isA("Player") && !collision.obj.p.dead) {
                         if (!this.p.hit) {
                             this.p.hit = true;
+                            Q.audio.play('coin.mp3');
                             this.animate({
                                     x: this.p.x,
                                     y: this.p.y - 100
@@ -237,6 +239,9 @@ var game = function () {
         })
         //************************************** */
         Q.scene("endGame", function (stage) {
+            Q.audio.stop('music_main.mp3');
+            Q.audio.play('music_die.mp3');
+
             var container = stage.insert(new Q.UI.Container({
                 x: Q.width / 2,
                 y: Q.height / 2,
@@ -257,16 +262,23 @@ var game = function () {
             }));
 
             button.on("click", function () {
+                Q.audio.stop();
                 Q.clearStages();
                 Q.stageScene('hud', 1);
                 Q.stageScene('level1');
-                Q.state.p.score=0;
+                Q.state.p.score = 0;
+                Q.audio.play('music_main.mp3', {
+                    loop: true
+                });
             });
 
             container.fit(20);
         });
 
         Q.scene("winGame", function (stage) {
+            Q.audio.stop('music_main.mp3');
+            Q.audio.play('music_level_complete.mp3');
+
             var container = stage.insert(new Q.UI.Container({
                 x: Q.width / 2,
                 y: Q.height / 2,
@@ -287,11 +299,15 @@ var game = function () {
             }));
 
             button.on("click", function () {
+                Q.audio.stop();
                 Q.clearStages();
                 Q.stageScene('hud', 1);
                 Q.stageScene('level1');
-                Q.state.p.score=0;
-                
+                Q.state.p.score = 0;
+                Q.audio.play('music_main.mp3', {
+                    loop: true
+                });
+
             });
 
             container.fit(20);
@@ -318,12 +334,15 @@ var game = function () {
                 Q.clearStages();
                 Q.stageScene('hud', 1);
                 Q.stageScene('level1');
-                
+                Q.audio.play('music_main.mp3', {
+                    loop: true
+                });
+
             });
 
             container.fit(20);
         });
-        Q.scene("hud", function(stage){
+        Q.scene("hud", function (stage) {
             Q.UI.Text.extend("Score", {
                 init: function (p) {
                     this._super({
@@ -342,13 +361,13 @@ var game = function () {
         Q.scene("level1", function (stage) {
             Q.stageTMX("level.tmx", stage);
             // Create the player and add them to the stage
-           
+
             var player = stage.insert(new Q.Player());
             stage.add("viewport").follow(player, {
                 x: true,
                 y: false
             });
-            
+
             stage.insert(new Q.Goomba());
             stage.insert(new Q.Bloopa());
             stage.insert(new Q.Princess());
@@ -377,10 +396,10 @@ var game = function () {
                 x: 530,
                 y: 450
             }));
-           
+
 
         });
-       
+
         Q.loadTMX("level.tmx", function () {
             Q.state.reset({
                 score: 0
