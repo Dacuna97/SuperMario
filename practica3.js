@@ -66,6 +66,14 @@ var game = function () {
                 rate: 1 / 5
             }
         });
+        Q.animations('coin_anim', {
+            taken: { 
+                frames: [1,2,3],
+                rate: 1 / 15,
+                loop: true
+            }
+           
+        });
         Q.Sprite.extend("Player", {
 
             init: function (p) {
@@ -210,6 +218,7 @@ var game = function () {
         Q.Sprite.extend("Coin", {
             init: function (p) {
                 this._super(p, {
+                    sprite: "coin_anim",
                     sheet: "coin",
                     x: p.x,
                     y: p.y,
@@ -222,6 +231,7 @@ var game = function () {
                 this.on("bump.left,bump.right,bump.bottom,bump.top", function (collision) {
                     if (collision.obj.isA("Player") && !collision.obj.p.dead) {
                         if (!this.p.hit) {
+                            this.play("taken")
                             this.p.hit = true;
                             Q.audio.play('coin.mp3');
                             this.animate({
