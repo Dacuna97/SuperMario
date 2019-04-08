@@ -66,14 +66,8 @@ var game = function () {
                 rate: 1 / 5
             }
         });
-        Q.animations('coin_anim', {
-            taken: { 
-                frames: [1,2,3],
-                rate: 1 / 15,
-                loop: true
-            }
-           
-        });
+        
+        
         Q.Sprite.extend("Player", {
 
             init: function (p) {
@@ -146,51 +140,104 @@ var game = function () {
                 // and give the user a "hop"
                 this.entity.on("bump.top", function (collision) {
                     if (collision.obj.isA("Player") && !collision.obj.p.dead) {
-                        this.destroy();
+                        this.play("die");
                         collision.obj.p.vy = -300;
+                        this.p.vx=0;
+                        this.p.vy=0;
+                        this.p.dead=true;
+                        var aux=this;
+                        setTimeout(function(){
+                            aux.destroy();
+                            }, 300);
+                       // var aux=this;
+                        
                     }
                 });
             }
         });
         //***************************************
         Q.compileSheets("goomba.png", "goomba.json");
+       
+        Q.animations('goomba_anim', {
+            move: { 
+               
+                frames: [0,1],
+                rate: 1 / 10,
+                loop: true
+            }  ,
+            die: { 
+                frames: [2],
+                rate: 1 / 5,
+                loop: false
+            }          
+        });
+        
 
         Q.Sprite.extend("Goomba", {
 
             init: function (p) {
 
                 this._super(p, {
+                    sprite: "goomba_anim",
                     sheet: "goomba", // Setting a sprite sheet sets sprite width and height
                     x: 270, // You can also set additional properties that can
                     y: 528, // be overridden on object creation
-                    vx: 40
+                    vx: 40,
+                    dead: false
                 });
-                this.add('2d,aiBounce,enemy');
+                this.add('2d,aiBounce,enemy,animation');
             },
-            step: function (dt) {}
+            step: function (dt) {
+                if(this.p.vx>0||this.p.vx<0)
+                this.play("move");
+            }
         });
         //***************************************
         Q.compileSheets("bloopa.png", "bloopa.json");
-
+        Q.animations('bloopa_anim', {
+            move_up: { 
+                frames: [0,1],
+                rate: 1 / 5,
+                loop: true
+            }  ,
+            move_down: { 
+                frames: [2],
+                rate: 1 / 15,
+                loop: false
+            },         
+            die: { 
+                frames: [1],
+                rate: 1 / 15,
+                loop: false
+            }          
+        });
         Q.Sprite.extend("Bloopa", {
             init: function (p) {
                 this._super(p, {
+                    sprite: "bloopa_anim",
                     sheet: "bloopa", // Setting a sprite sheet sets sprite width and height
                     x: 180, // You can also set additional properties that can
                     y: 425, // be overridden on object creation
                     vy: -10,
-                    move: ''
+                    move: '',
+                    dead: false,
                 });
-                this.add('2d,aiBounce,enemy');
+                this.add('2d,aiBounce,enemy,animation');
             },
             step: function (dt) {
-                if (this.p.y >= 518 && this.p.move != 'up')
+                if (this.p.y >= 518 && this.p.move != 'up'&&!this.p.dead)
                     this.p.move = 'up';
-                if (this.p.move == 'up' && this.p.y <= 330)
+                if (this.p.move == 'up' && this.p.y <= 330 ||this.p.dead)
                     this.p.move = '';
                 if (this.p.move == 'up')
                     this.p.vy = -100;
                 this.p.y += this.p.vy * dt;
+                if (this.p.vy < 0)
+                    this.play("move_up");
+                else
+                    this.play("move_down");
+
+            
             }
         });
         Q.compileSheets("princess.png");
@@ -215,6 +262,13 @@ var game = function () {
             step: function (dt) {}
         });
         Q.compileSheets("coin.png", "coin.json");
+        Q.animations('coin_anim', {
+            taken: { 
+                frames: [0,1,2],
+                rate: 1 / 15,
+                loop: true
+            }          
+        });
         Q.Sprite.extend("Coin", {
             init: function (p) {
                 this._super(p, {
