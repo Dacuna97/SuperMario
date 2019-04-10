@@ -66,8 +66,8 @@ var game = function () {
                 rate: 1 / 5
             }
         });
-        
-        
+
+
         Q.Sprite.extend("Player", {
 
             init: function (p) {
@@ -142,36 +142,36 @@ var game = function () {
                     if (collision.obj.isA("Player") && !collision.obj.p.dead) {
                         this.play("die");
                         collision.obj.p.vy = -300;
-                        this.p.vx=0;
-                        this.p.vy=0;
-                        this.p.dead=true;
-                        var aux=this;
-                        setTimeout(function(){
+                        this.p.vx = 0;
+                        this.p.vy = 0;
+                        this.p.dead = true;
+                        var aux = this;
+                        setTimeout(function () {
                             aux.destroy();
-                            }, 300);
-                       // var aux=this;
-                        
+                        }, 300);
+                        // var aux=this;
+
                     }
                 });
             }
         });
         //***************************************
         Q.compileSheets("goomba.png", "goomba.json");
-       
+
         Q.animations('goomba_anim', {
-            move: { 
-               
-                frames: [0,1],
+            move: {
+
+                frames: [0, 1],
                 rate: 1 / 10,
                 loop: true
-            }  ,
-            die: { 
+            },
+            die: {
                 frames: [2],
                 rate: 1 / 5,
                 loop: false
-            }          
+            }
         });
-        
+
 
         Q.Sprite.extend("Goomba", {
 
@@ -188,28 +188,28 @@ var game = function () {
                 this.add('2d,aiBounce,enemy,animation');
             },
             step: function (dt) {
-                if(this.p.vx>0||this.p.vx<0)
-                this.play("move");
+                if (this.p.vx > 0 || this.p.vx < 0)
+                    this.play("move");
             }
         });
         //***************************************
         Q.compileSheets("bloopa.png", "bloopa.json");
         Q.animations('bloopa_anim', {
-            move_up: { 
-                frames: [0,1],
+            move_up: {
+                frames: [0, 1],
                 rate: 1 / 5,
                 loop: true
-            }  ,
-            move_down: { 
+            },
+            move_down: {
                 frames: [2],
                 rate: 1 / 15,
                 loop: false
-            },         
-            die: { 
+            },
+            die: {
                 frames: [1],
                 rate: 1 / 15,
                 loop: false
-            }          
+            }
         });
         Q.Sprite.extend("Bloopa", {
             init: function (p) {
@@ -217,27 +217,41 @@ var game = function () {
                     sprite: "bloopa_anim",
                     sheet: "bloopa", // Setting a sprite sheet sets sprite width and height
                     x: 180, // You can also set additional properties that can
-                    y: 425, // be overridden on object creation
+                    y: 350, // be overridden on object creation
                     vy: -10,
-                    move: '',
+                    move: 'down',
                     dead: false,
+                    range: 150,
+                    dest: 0
                 });
                 this.add('2d,aiBounce,enemy,animation');
             },
             step: function (dt) {
-                if (this.p.y >= 518 && this.p.move != 'up'&&!this.p.dead)
-                    this.p.move = 'up';
-                if (this.p.move == 'up' && this.p.y <= 330 ||this.p.dead)
-                    this.p.move = '';
-                if (this.p.move == 'up')
+                if (this.p.move == 'up') {
+                    this.p.dest = this.p.y - this.p.range;
+                    this.p.move = 'taken_up';
+                }
+                if (this.p.move == 'down') {
+                    this.p.dest = this.p.y + this.p.range;
+                    this.p.move = 'taken_down';
+                }
+                if ((this.p.y < this.p.dest && this.p.move == 'taken_up') || this.p.dead) {
+                    if (!this.p.dead)
+                        this.p.y = this.p.dest;
+                    this.p.move = 'down';
+                } else if (this.p.y > this.p.dest && this.p.move == 'taken_up')
                     this.p.vy = -100;
+                else if (this.p.y > this.p.dest && this.p.move == 'taken_down') {
+                    this.p.y = this.p.dest;
+                    this.p.move = 'up';
+                }
                 this.p.y += this.p.vy * dt;
                 if (this.p.vy < 0)
                     this.play("move_up");
                 else
                     this.play("move_down");
 
-            
+
             }
         });
         Q.compileSheets("princess.png");
@@ -263,11 +277,11 @@ var game = function () {
         });
         Q.compileSheets("coin.png", "coin.json");
         Q.animations('coin_anim', {
-            taken: { 
-                frames: [0,1,2],
+            taken: {
+                frames: [0, 1, 2],
                 rate: 1 / 15,
                 loop: true
-            }          
+            }
         });
         Q.Sprite.extend("Coin", {
             init: function (p) {
