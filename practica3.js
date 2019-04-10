@@ -4,8 +4,8 @@ var game = function () {
     // the Sprites, Scenes, Input and 2D module. The 2D module
     // includes the `TileLayer` class as well as the `2d` componet.
     var Q = Quintus({
-            audioSupported: ['mp3', 'ogg']
-        })
+        audioSupported: ['mp3', 'ogg']
+    })
         .include("Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX,Audio")
         // Maximize this game to whatever the size of the browser is
         .setup({
@@ -81,13 +81,6 @@ var game = function () {
                 });
 
                 this.add('2d, platformerControls, animation');
-                /*this.on("bump.left,bump.right", function (collision) {
-                    if (collision.tile == 41 || collision.tile == 34 || collision.tile == 27) {
-                        this.coins++;
-                        console.log(collision.obj);
-                        collision.obj.destroy();
-                    }
-                });*/
 
             },
             step: function (dt) {
@@ -179,8 +172,8 @@ var game = function () {
                 this._super(p, {
                     sprite: "goomba_anim",
                     sheet: "goomba", // Setting a sprite sheet sets sprite width and height
-                    x: 270, // You can also set additional properties that can
-                    y: 528, // be overridden on object creation
+                    x: p.x, // You can also set additional properties that can
+                    y: p.y, // be overridden on object creation
                     vx: 40,
                     dead: false
                 });
@@ -215,12 +208,12 @@ var game = function () {
                 this._super(p, {
                     sprite: "bloopa_anim",
                     sheet: "bloopa", // Setting a sprite sheet sets sprite width and height
-                    x: 180, // You can also set additional properties that can
-                    y: 350, // be overridden on object creation
+                    x: p.x, // You can also set additional properties that can
+                    y: p.y, // be overridden on object creation
                     vy: -10,
-                    move: 'down',
+                    move: 'up',
                     dead: false,
-                    range: 150,
+                    range: p.range,
                     dest: 0
                 });
                 this.add('2d,aiBounce,enemy,animation');
@@ -272,7 +265,7 @@ var game = function () {
                     }
                 });
             },
-            step: function (dt) {}
+            step: function (dt) { }
         });
         Q.compileSheets("coin.png", "coin.json");
         Q.animations('coin_anim', {
@@ -302,9 +295,9 @@ var game = function () {
                             this.p.hit = true;
                             Q.audio.play('coin.mp3');
                             this.animate({
-                                    x: this.p.x,
-                                    y: this.p.y - 100
-                                },
+                                x: this.p.x,
+                                y: this.p.y - 100
+                            },
                                 1, Q.Easing.Quadratic.Linear, {
                                     callback: () => {
                                         this.destroy();
@@ -350,7 +343,16 @@ var game = function () {
                     loop: true
                 });
             });
-
+            Q.input.on('fire', this, () => {
+                Q.audio.stop();
+                Q.clearStages();
+                Q.stageScene('hud', 1);
+                Q.stageScene('level1');
+                Q.state.p.score = 0;
+                Q.audio.play('music_main.mp3', {
+                    loop: true
+                });
+            });
             container.fit(20);
         });
 
@@ -388,7 +390,16 @@ var game = function () {
                 });
 
             });
-
+            Q.input.on('fire', this, () => {
+                Q.audio.stop();
+                Q.clearStages();
+                Q.stageScene('hud', 1);
+                Q.stageScene('level1');
+                Q.state.p.score = 0;
+                Q.audio.play('music_main.mp3', {
+                    loop: true
+                });
+            });
             container.fit(20);
         });
         Q.compileSheets("mainTitle.png");
@@ -419,6 +430,15 @@ var game = function () {
 
             });
 
+            Q.input.on('fire', this, () => {
+                Q.clearStages();
+                Q.stageScene('hud', 1);
+                Q.stageScene('level1');
+                Q.audio.play('music_main.mp3', {
+                    loop: true
+                });
+            });
+
             container.fit(20);
         });
         Q.scene("hud", function (stage) {
@@ -447,8 +467,24 @@ var game = function () {
                 y: false
             });
 
-            stage.insert(new Q.Goomba());
-            stage.insert(new Q.Bloopa());
+            stage.insert(new Q.Goomba({
+                x: 270,
+                y: 528
+            }));
+            stage.insert(new Q.Goomba({
+                x: 500,
+                y: 528
+            }));
+            stage.insert(new Q.Bloopa({
+                x: 180,
+                y: 500,
+                range: 150
+            }));
+            stage.insert(new Q.Bloopa({
+                x: 1900,
+                y: 450,
+                range: 160
+            }));
             stage.insert(new Q.Princess());
             stage.insert(new Q.Coin({
                 x: 270,
