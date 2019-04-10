@@ -77,8 +77,7 @@ var game = function () {
                     sheet: "marioR", // Setting a sprite sheet sets sprite width and height
                     x: 50, // You can also set additional properties that can
                     y: 380, // be overridden on object creation
-                    dead: false,
-                    coins: 0
+                    dead: false
                 });
 
                 this.add('2d, platformerControls, animation');
